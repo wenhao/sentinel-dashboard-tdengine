@@ -1,5 +1,6 @@
 package com.alibaba.csp.sentinel.dashboard.repository.metric.tdengine.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ public class SentinelMetric {
     private Date gmtCreate;
     private Date gmtModified;
     private String app;
+    @Column(name = "statistics_timestamp")
     private Date timestamp;
     private String resource;
     private Long passQps;
@@ -21,6 +23,7 @@ public class SentinelMetric {
     private Long blockQps;
     private Long exceptionQps;
     private double rt;
+    @Column(name = "statistics_count")
     private int count;
     private int resourceCode;
 
