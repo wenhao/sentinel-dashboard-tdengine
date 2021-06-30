@@ -162,7 +162,7 @@
     </dependencies>
 
     <build>
-        <finalName>sentinel-dashboard</finalName>
+        <finalName>sentinel-dashboard-tdengine</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
