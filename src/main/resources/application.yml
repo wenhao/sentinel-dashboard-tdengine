@@ -2,20 +2,20 @@ spring:
   datasource:
     hikari:
       driver-class-name: com.taosdata.jdbc.TSDBDriver
-      jdbc-url: jdbc:TAOS://127.0.0.1:6030/sentinel_metric
-      username: root
-      password: taosdata
+      jdbc-url: jdbc:TAOS://${DB_URL:127.0.0.1}:6030/${DB_NAME:sentinel_metric}
+      username: ${DB_USERNAME:root}
+      password: ${DB_PASSWORD:taosdata}
       connection-timeout: 10000
       idle-timeout: 600000
       max-lifetime: 1800000
-      maximum-pool-size: 20
+      maximum-pool-size: ${DB_MAXIMUM_POOL_SIZE:20}
 
 auth:
   filter:
     exclude-urls: /,/auth/login,/auth/logout,/registry/machine,/version
     exclude-url-suffixes: htm,html,js,css,map,ico,ttf,woff,png
-  username: sentinel
-  password: sentinel
+  username: ${SENTINEL_USERNAME:sentinel}
+  password: ${SENTINEL_PASSWORD:sentinel}
 server:
   servlet:
     encoding:
