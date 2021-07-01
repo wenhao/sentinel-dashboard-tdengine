@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/wenhao/sentinel-dashboard-tdengine.svg?branch=master)](https://travis-ci.org/wenhao/sentinel-dashboard-tdengine)
 # Sentinel 控制台
 
 ## 支持TDEngine
