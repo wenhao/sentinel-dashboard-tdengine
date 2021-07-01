@@ -3,8 +3,8 @@ CREATE DATABASE IF NOT EXISTS sentinel_metric;
 USE sentinel_metric;
 
 CREATE TABLE IF NOT EXISTS sentinel_metric(
-    id BIGINT,
     gmt_create TIMESTAMP,
+    id BIGINT,
     gmt_modified TIMESTAMP,
     app NCHAR(100),
     statistics_timestamp TIMESTAMP,

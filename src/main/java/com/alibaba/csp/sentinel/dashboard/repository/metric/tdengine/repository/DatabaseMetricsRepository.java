@@ -6,12 +6,13 @@ import com.alibaba.csp.sentinel.dashboard.repository.metric.tdengine.model.Senti
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,19 +22,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Primary
 @Transactional
 @Repository
 public class DatabaseMetricsRepository implements MetricsRepository<MetricEntity> {
 
-    private final SentinelMetricRepository sentinelMetricRepository;
-
-    @Autowired
-    public DatabaseMetricsRepository(SentinelMetricRepository sentinelMetricRepository) {
-        this.sentinelMetricRepository = sentinelMetricRepository;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(MetricEntity metric) {
@@ -42,16 +38,15 @@ public class DatabaseMetricsRepository implements MetricsRepository<MetricEntity
         }
         Optional.of(metric)
                 .map(this::toSentinelMetric)
-                .ifPresent(sentinelMetricRepository::save);
+                .ifPresent(entityManager::persist);
     }
 
     @Override
     public void saveAll(Iterable<MetricEntity> metrics) {
-        Optional.ofNullable(metrics)
-                .map(it -> StreamSupport.stream(metrics.spliterator(), false)
-                        .map(this::toSentinelMetric)
-                        .collect(Collectors.toList()))
-                .ifPresent(sentinelMetricRepository::saveAll);
+        if (metrics == null) {
+            return;
+        }
+        metrics.forEach(this::save);
     }
 
     @Override
@@ -59,7 +54,19 @@ public class DatabaseMetricsRepository implements MetricsRepository<MetricEntity
         if (StringUtil.isBlank(app) || StringUtil.isBlank(resource)) {
             return Lists.newArrayList();
         }
-        return sentinelMetricRepository.findAllByAppAndResourceAndTimestampBetween(app, resource, Date.from(Instant.ofEpochMilli(startTime)), Date.from(Instant.ofEpochMilli(endTime)))
+        StringBuilder hql = new StringBuilder();
+        hql.append("FROM SentinelMetric");
+        hql.append(" WHERE app=:app");
+        hql.append(" AND resource=:resource");
+        hql.append(" AND timestamp>=:startTime");
+        hql.append(" AND timestamp<=:endTime");
+
+        TypedQuery<SentinelMetric> query = entityManager.createQuery(hql.toString(), SentinelMetric.class);
+        query.setParameter("app", app);
+        query.setParameter("resource", resource);
+        query.setParameter("startTime", Date.from(Instant.ofEpochMilli(startTime)));
+        query.setParameter("endTime", Date.from(Instant.ofEpochMilli(endTime)));
+        return Optional.ofNullable(query.getResultList())
                 .map(it -> it.stream()
                         .map(this::toMetricEntity)
                         .collect(Collectors.toList()))
@@ -74,14 +81,20 @@ public class DatabaseMetricsRepository implements MetricsRepository<MetricEntity
         }
 
         long startTime = System.currentTimeMillis() - 1000 * 60;
-        List<MetricEntity> metricEntities = sentinelMetricRepository.findAllByAppAndTimestampGreaterThanEqual(app, Date.from(Instant.ofEpochMilli(startTime)))
-                .map(it -> it.stream()
-                        .map(this::toMetricEntity)
-                        .collect(Collectors.toList()))
-                .orElse(Lists.newArrayList());
+        StringBuilder hql = new StringBuilder();
+        hql.append("FROM SentinelMetric");
+        hql.append(" WHERE app=:app");
+        hql.append(" AND timestamp>=:startTime");
+        TypedQuery<SentinelMetric> query = entityManager.createQuery(hql.toString(), SentinelMetric.class);
+        query.setParameter("app", app);
+        query.setParameter("startTime", Date.from(Instant.ofEpochMilli(startTime)));
+
+        List<MetricEntity> sentinelMetrics = query.getResultList().stream()
+                .map(this::toMetricEntity)
+                .collect(Collectors.toList());
         Map<String, MetricEntity> resourceCount = new HashMap<>(32);
 
-        for (MetricEntity metricEntity : metricEntities) {
+        for (MetricEntity metricEntity : sentinelMetrics) {
             String resource = metricEntity.getResource();
             if (resourceCount.containsKey(resource)) {
                 MetricEntity oldEntity = resourceCount.get(resource);
