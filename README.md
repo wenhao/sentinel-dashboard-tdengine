@@ -16,19 +16,10 @@ mvn clean package
 
 ### 1.2 如何启动
 
-切换数据库，默认使用h2数据库，切换为TDEngine：
-application.yml
-```yaml
-tdengine:
-  enabled: ${TDENGINE_ENABLED:true}
-```
-或者传入启动参数：
-
 ```bash
 java -Dserver.port=8080 \
 -Dcsp.sentinel.dashboard.server=localhost:8080 \
 -Dproject.name=sentinel-dashboard \
--Dtdengine.enabled=true \
 -jar target/sentinel-dashboard-tdengine.jar
 ```
 
