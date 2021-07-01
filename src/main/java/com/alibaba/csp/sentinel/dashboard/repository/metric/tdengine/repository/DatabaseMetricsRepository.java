@@ -7,6 +7,8 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +23,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Primary
 @Transactional
-@Repository("TDEngineMetricsRepository")
-public class TDEngineMetricsRepository implements MetricsRepository<MetricEntity> {
+@Repository
+public class DatabaseMetricsRepository implements MetricsRepository<MetricEntity> {
 
     private final SentinelMetricRepository sentinelMetricRepository;
 
     @Autowired
-    public TDEngineMetricsRepository(SentinelMetricRepository sentinelMetricRepository) {
+    public DatabaseMetricsRepository(SentinelMetricRepository sentinelMetricRepository) {
         this.sentinelMetricRepository = sentinelMetricRepository;
     }
 

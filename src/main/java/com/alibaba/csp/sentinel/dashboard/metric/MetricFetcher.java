@@ -81,7 +81,6 @@ public class MetricFetcher {
 
     private Map<String, AtomicLong> appLastFetchTime = new ConcurrentHashMap<>();
 
-    @Qualifier("TDEngineMetricsRepository")
     @Autowired
     private MetricsRepository<MetricEntity> metricStore;
     @Autowired
