@@ -16,16 +16,21 @@ mvn clean package
 
 ### 1.2 如何启动
 
+设置环境变量：
+
+DB_URL=<FQDN>
+DB_NAME=<DB_NAME>
+DB_USERNAME=<DB_USERNAME>
+DB_PASSWORD=<DB_USERNAME>
+SENTINEL_USERNAME=<SENTINEL_USERNAME>
+SENTINEL_PASSWORD=<SENTINEL_PASSWORD>
+
 ```bash
 java -Dserver.port=8080 \
 -Dcsp.sentinel.dashboard.server=localhost:8080 \
 -Dproject.name=sentinel-dashboard \
 -jar target/sentinel-dashboard-tdengine.jar
 ```
-
-或者设置环境变量：
-
-TDENGINE_ENABLED=true
 
 上述命令中我们指定几个 JVM 参数，其中 `-Dserver.port=8080` 是 Spring Boot 的参数，
 用于指定 Spring Boot 服务端启动端口为 `8080`。其余几个是 Sentinel 客户端的参数。
