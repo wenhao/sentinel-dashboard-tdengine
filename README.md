@@ -1,5 +1,18 @@
 # Sentinel 控制台
 
+## 支持TDEngine
+
+运行时修改环境变量：
+
+DB_URL=<FQDN>
+DB_NAME=<DB_NAME>
+DB_USERNAME=<DB_USERNAME>
+DB_PASSWORD=<DB_USERNAME>
+SENTINEL_USERNAME=<SENTINEL_USERNAME>
+SENTINEL_PASSWORD=<SENTINEL_PASSWORD>
+
+或者直接修改`application.yml`中的变量值。
+
 ## 0. 概述
 
 Sentinel 控制台是流量控制、熔断降级规则统一配置和管理的入口，它为用户提供了机器自发现、簇点链路自发现、监控、规则配置等功能。在 Sentinel 控制台上，我们可以配置规则并实时查看流量控制效果。
@@ -15,15 +28,6 @@ mvn clean package
 ```
 
 ### 1.2 如何启动
-
-设置环境变量：
-
-DB_URL=<FQDN>
-DB_NAME=<DB_NAME>
-DB_USERNAME=<DB_USERNAME>
-DB_PASSWORD=<DB_USERNAME>
-SENTINEL_USERNAME=<SENTINEL_USERNAME>
-SENTINEL_PASSWORD=<SENTINEL_PASSWORD>
 
 ```bash
 java -Dserver.port=8080 \
