@@ -1,5 +1,11 @@
 # Sentinel 控制台
 
+## 重要
+
+Docker中TDengine驱动的版本号一定要与TDengine服务器的版本号保持一致。
+
+JAVA_OPTS中指定：`-Djava.lib.path=/opt/TDengine-client-2.1.3.2/driver`。
+
 ## 支持TDEngine
 
 运行时修改环境变量：
